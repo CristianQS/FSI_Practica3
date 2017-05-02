@@ -16,6 +16,13 @@ actions_list = {"UP": 0,
                 "LEFT": 3
                 }
 
+
+actions_list_greedy = {0: "UP" ,
+                    1: "RIGHT",
+                    2: "DOWN",
+                    3: "LEFT"
+}
+
 actions_vectors = {"UP": (-1, 0),
                    "RIGHT": (0, 1),
                    "DOWN": (1, 0),
@@ -58,6 +65,19 @@ def getRndAction(state):
 def getRndState():
     return random.randint(0, height * width - 1)
 
+def greedy(state):
+    if max(Q[state]) != 0:
+        return actions_list_greedy[np.argmax(Q[state])]
+    else:
+        return getRndAction(state)
+
+#epsilon=0.1
+def Egreedy(state,epsilon):
+    if ():
+        return actions_list_greedy[np.argmax(Q[state])]
+    else:
+        return getRndAction(state)
+
 
 Rewards[4 * width + 3] = -10000
 Rewards[4 * width + 2] = -10000
@@ -81,12 +101,13 @@ def qlearning(s1, a, s2):
 
 
 # Episodes
-accion=0
+naccion=0
 for i in xrange(100):
     state = getRndState()
     while state != final_state:
-        action = getRndAction(state)
-        accion = accion + 1
+        #action = getRndAction(state) Politica
+        action = greedy(state) #Politica de explotacion
+        naccion = naccion + 1
         y = getStateCoord(state)[0] + actions_vectors[action][0]
         x = getStateCoord(state)[1] + actions_vectors[action][1]
         new_state = getState(y, x)
@@ -94,8 +115,9 @@ for i in xrange(100):
         state = new_state
 
 print Q
-promedio = accion/100
+promedio = naccion/100
 print "Promedio de acciones: ", promedio
+
 
 # Q matrix plot
 
