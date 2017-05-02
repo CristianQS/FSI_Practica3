@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 
 
 # Environment size
+from tensorflow.contrib.keras.python.keras.backend import epsilon
+
 width = 5
 height = 16
 
@@ -73,7 +75,8 @@ def greedy(state):
 
 #epsilon=0.1
 def Egreedy(state,epsilon):
-    if ():
+    num = np.random.random()
+    if epsilon > num:
         return actions_list_greedy[np.argmax(Q[state])]
     else:
         return getRndAction(state)
@@ -102,11 +105,13 @@ def qlearning(s1, a, s2):
 
 # Episodes
 naccion=0
+epsilon = 0.1
 for i in xrange(100):
     state = getRndState()
     while state != final_state:
         #action = getRndAction(state) Politica
-        action = greedy(state) #Politica de explotacion
+        #action = greedy(state) #Politica de explotacion
+        action = Egreedy(state,epsilon) #Politica de explotacion
         naccion = naccion + 1
         y = getStateCoord(state)[0] + actions_vectors[action][0]
         x = getStateCoord(state)[1] + actions_vectors[action][1]
