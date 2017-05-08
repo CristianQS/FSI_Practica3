@@ -70,7 +70,7 @@ def getRndState():
     return random.randint(0, height * width - 1)
 
 def greedy(state):
-    if max(Q[state]) > 0:
+    if max(Q[state]) != 0:
         return actions_list_greedy[np.argmax(Q[state])]
     else:
         return getRndAction(state)
@@ -104,16 +104,13 @@ def qlearning(s1, a, s2):
     Q[s1][a] = Rewards[s2] + discount * max(Q[s2])
     return
 
-
 # Episodes
 naccion=0
-epsilon = 0.1
+Q = np.zeros((height * width, num_actions))  # Q matrix
 for i in xrange(100):
     state = getRndState()
     while state != final_state:
-        #action = getRndAction(state)
-        #action = greedy(state) #Politica de explotacion
-        action = Egreedy(state,epsilon) #Politica de explotacion
+        action = getRndAction(state)
         naccion = naccion + 1
         y = getStateCoord(state)[0] + actions_vectors[action][0]
         x = getStateCoord(state)[1] + actions_vectors[action][1]
@@ -122,10 +119,52 @@ for i in xrange(100):
         state = new_state
 
 promedio = naccion/100
-print "Promedio de acciones: ", promedio
-print Q
+print ""
+print "----------------Exploracion------------------"
+print "Promedio de acciones de la politica de exploracion :"  ,promedio
+print ""
 
+# Episodes
+naccion=0
+Q = np.zeros((height * width, num_actions))  # Q matrix
+for i in xrange(100):
+    state = getRndState()
+    while state != final_state:
+        action = greedy(state)
+        naccion = naccion + 1
+        y = getStateCoord(state)[0] + actions_vectors[action][0]
+        x = getStateCoord(state)[1] + actions_vectors[action][1]
+        new_state = getState(y, x)
+        qlearning(state, actions_list[action], new_state)
+        state = new_state
 
+promedio = naccion/100
+print ""
+print "----------------greedy-----------------------"
+print "Promedio de acciones de la politica greedy :"  ,promedio
+
+print ""
+print "----------------E-greedy---------------------"
+print ""
+# Episodes
+naccion=0
+for epsilon in (0.9,0.8,0.7):
+    naccion = 0
+    Q = np.zeros((height * width, num_actions))  # Q matrix
+    for i in xrange(100):
+        state = getRndState()
+        while state != final_state:
+            action = Egreedy(state,epsilon)
+            naccion = naccion + 1
+            y = getStateCoord(state)[0] + actions_vectors[action][0]
+            x = getStateCoord(state)[1] + actions_vectors[action][1]
+            new_state = getState(y, x)
+            qlearning(state, actions_list[action], new_state)
+            state = new_state
+
+    promedio = naccion/100
+    print "Promedio de acciones de la politica e-greedy con una epsilon de %.1f :" % epsilon ,promedio
+#print Q
 
 
 # Q matrix plot
