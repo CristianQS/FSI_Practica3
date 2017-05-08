@@ -1,4 +1,6 @@
 import random
+from itertools import groupby
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -68,7 +70,7 @@ def getRndState():
     return random.randint(0, height * width - 1)
 
 def greedy(state):
-    if max(Q[state]) != 0:
+    if max(Q[state]) > 0:
         return actions_list_greedy[np.argmax(Q[state])]
     else:
         return getRndAction(state)
@@ -77,9 +79,9 @@ def greedy(state):
 def Egreedy(state,epsilon):
     num = np.random.random()
     if epsilon > num:
-        return actions_list_greedy[np.argmax(Q[state])]
-    else:
         return getRndAction(state)
+    else:
+        return greedy(state)
 
 
 Rewards[4 * width + 3] = -10000
@@ -109,7 +111,7 @@ epsilon = 0.1
 for i in xrange(100):
     state = getRndState()
     while state != final_state:
-        #action = getRndAction(state) Politica
+        #action = getRndAction(state)
         #action = greedy(state) #Politica de explotacion
         action = Egreedy(state,epsilon) #Politica de explotacion
         naccion = naccion + 1
@@ -119,9 +121,11 @@ for i in xrange(100):
         qlearning(state, actions_list[action], new_state)
         state = new_state
 
-print Q
 promedio = naccion/100
 print "Promedio de acciones: ", promedio
+print Q
+
+
 
 
 # Q matrix plot
